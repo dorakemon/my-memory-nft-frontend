@@ -61,7 +61,7 @@ const Header = () => {
             open={Boolean(anchorEl)}
             onClose={handleClose}
           >
-            <MenuItem disableRipple>Profile</MenuItem>
+            <MenuItem disableRipple>Shibuya test network</MenuItem>
             <MenuItem disableRipple>My account</MenuItem>
           </Menu>
         </Toolbar>
