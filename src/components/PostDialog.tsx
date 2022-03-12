@@ -12,6 +12,7 @@ import {
   TextField
 } from "@mui/material";
 import LoadingButton from "./LoadingButton";
+import { ethers } from "ethers";
 
 const client = create({ url: "https://ipfs.infura.io:5001/api/v0" });
 
@@ -42,10 +43,10 @@ const metadataToFile = (metadata: object) => {
 
 const PostDialog = (props: {
   open: boolean;
-  postImage: string;
   onClose: () => void;
+  contract: ethers.Contract | null;
 }) => {
-  const { onClose, postImage, open } = props;
+  const { onClose, open, contract } = props;
 
   const [cardTitle, setCardTitle] = useState("");
   const [cardText, setCardText] = useState("");
@@ -97,11 +98,11 @@ const PostDialog = (props: {
     if (canvasRef.current) {
       const file = await canvasToFile(canvasRef.current, cardTitle);
       try {
-        // const addedImage = await client.add(file);
-        // const url = `https://ipfs.infura.io/ipfs/${addedImage.path}`;
-        // dummy
-        const imageUrl =
-          "https://ipfs.infura.io/ipfs/QmcVwqbAS3UVDGgVMAXgkZXPbq6WEJWNF9UJ4DdcaxLwP3";
+        const addedImage = await client.add(file);
+        const imageUrl = `https://ipfs.infura.io/ipfs/${addedImage.path}`;
+        // mock
+        // const imageUrl =
+        //   "https://ipfs.infura.io/ipfs/QmcVwqbAS3UVDGgVMAXgkZXPbq6WEJWNF9UJ4DdcaxLwP3";
         //
         console.log(imageUrl);
 
@@ -111,10 +112,20 @@ const PostDialog = (props: {
           image: imageUrl
         };
         const metadataFile = metadataToFile(metadata);
-        // const addedMetadata = await client.add(metadataFile);
-        // const metadataUrl = `https://ipfs.infura.io/ipfs/${addedMetadata.path}`;
-        const metadataUrl =
-          "https://ipfs.infura.io/ipfs/QmQpCpJgeMZ8UDqGgtkZX7PeoxLmyh2BcWBA28GXM9bYND";
+        const addedMetadata = await client.add(metadataFile);
+        const metadataUrl = `https://ipfs.infura.io/ipfs/${addedMetadata.path}`;
+        // mock
+        // const metadataUrl =
+        //   "https://ipfs.infura.io/ipfs/QmQpCpJgeMZ8UDqGgtkZX7PeoxLmyh2BcWBA28GXM9bYND";
+        if (contract) {
+          const { mintBurnable } = contract.functions;
+          const result = await mintBurnable(metadataUrl, {
+            value: ethers.utils.parseEther("1")
+          });
+          console.log(result);
+        } else {
+          console.log("contract not found");
+        }
       } catch (error) {
         console.log("Error uploading file: ", error);
       } finally {
