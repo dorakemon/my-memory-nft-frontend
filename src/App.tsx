@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { ethers } from "ethers";
+// import Web3 from "web3";
 
 import "./App.css";
 import { Button } from "@mui/material";
@@ -10,9 +11,11 @@ import artifact from "./abi/Burnable.json";
 import MemoryView from "./components/MemoryView";
 import Header from "./components/Header";
 
-const contractAddress = "0xd3f1D0EeC419D436E94D0Ec88EdDC984DDE811B2";
+const contractAddress = "0xD887B1ff25A0a15bCc5cC247908Ab03F5cDE4C29";
 
 function App() {
+  const [address, setAddress] = useState("");
+  const [balance, setBalance] = useState("");
   const [postDialogOpen, setPostDialogOpen] = useState(false);
   const [contract, setContract] = useState<ethers.Contract | null>(null);
 
@@ -22,8 +25,17 @@ function App() {
       console.log(window.ethereum);
       const provider = new ethers.providers.Web3Provider(window.ethereum);
       await provider.send("eth_requestAccounts", []);
-      console.log(provider);
+      const account = await window.ethereum.request({
+        method: "eth_requestAccounts"
+      });
+
       const signer = provider.getSigner();
+      const contractUser = await signer.getAddress();
+      const contractUserBalance = await provider.getBalance(contractUser);
+      // console.log(contractUser);
+      setAddress(contractUser);
+      setBalance(ethers.utils.formatEther(contractUserBalance));
+
       const contract = new ethers.Contract(
         contractAddress,
         artifact.abi,
@@ -61,7 +73,7 @@ function App() {
 
   return (
     <div className="App">
-      <Header />
+      <Header address={address} balance={balance} />
       <Button
         variant="contained"
         color="success"

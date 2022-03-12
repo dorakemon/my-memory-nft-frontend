@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { Grid } from "@mui/material";
+import { Button, Grid } from "@mui/material";
 import MemoryCard from "./MemoryCard";
 import { ethers } from "ethers";
 
@@ -24,8 +24,29 @@ const MemoryView = (props: { contract: ethers.Contract | null }) => {
     const getCards = async () => {
       if (contract) {
         const _cards: Card[] = [];
+        try {
+          const { tokenURI } = contract.functions;
+          for (let i = 1; i < 7; i++) {
+            const result = await tokenURI(i);
+            console.log(result);
+            const { name, image } = await fetchMetadata(result);
+            _cards.push({ id: String(i), title: name, image });
+          }
+        } finally {
+          setCards(_cards);
+        }
+      }
+    };
+    console.log("getCards");
+    getCards();
+  }, [contract]);
+
+  const handleRefreshBtn = () => {
+    const getCards = async () => {
+      if (contract) {
+        const _cards: Card[] = [];
         const { tokenURI } = contract.functions;
-        for (let i = 1; i < 7; i++) {
+        for (let i = 1; i < 8; i++) {
           const result = await tokenURI(i);
           console.log(result);
           const { name, image } = await fetchMetadata(result);
@@ -34,15 +55,25 @@ const MemoryView = (props: { contract: ethers.Contract | null }) => {
         setCards(_cards);
       }
     };
-    console.log("getCa");
+    console.log("getCards");
     getCards();
-  }, []);
+  };
 
-  const burnPost = (id: string) => {
+  const burnPost = async (id: string) => {
     console.log(id);
+    const getCards = async () => {
+      if (contract) {
+        const { burn } = contract.functions;
+        const result = await burn(id);
+        console.log(result);
+      }
+    };
+    console.log("burn");
+    getCards();
   };
   return (
     <>
+      <Button onClick={handleRefreshBtn}>REFRESH</Button>
       <Grid container spacing={4} px="5vw">
         {cards.map((card, key) => (
           <Grid key={key} item xs={12} sm={6} md={4} lg={3}>

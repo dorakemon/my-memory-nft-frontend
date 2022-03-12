@@ -11,8 +11,9 @@ import {
   Typography
 } from "@mui/material";
 
-const Header = () => {
-  useState;
+const Header = (props: { address: string; balance: string }) => {
+  const { address, balance } = props;
+
   const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
 
   const handleMenu = (event: React.MouseEvent<HTMLElement>) => {
@@ -61,8 +62,17 @@ const Header = () => {
             open={Boolean(anchorEl)}
             onClose={handleClose}
           >
-            <MenuItem disableRipple>Shibuya test network</MenuItem>
+            <MenuItem disableRipple style={{ fontWeight: "900" }}>
+              Shibuya test network
+            </MenuItem>
             <MenuItem disableRipple>My account</MenuItem>
+            <MenuItem disableRipple style={{ fontWeight: "700" }}>
+              {address}
+            </MenuItem>
+            <MenuItem disableRipple>My Balance</MenuItem>
+            <MenuItem disableRipple style={{ fontWeight: "700" }}>
+              {balance}
+            </MenuItem>
           </Menu>
         </Toolbar>
       </Container>

@@ -123,6 +123,8 @@ const PostDialog = (props: {
             value: ethers.utils.parseEther("1")
           });
           console.log(result);
+          setLoading(false);
+          handleClose();
         } else {
           console.log("contract not found");
         }
