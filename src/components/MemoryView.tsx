@@ -51,21 +51,7 @@ const MemoryView = (props: {
   }, [contract]);
 
   const handleRefreshBtn = () => {
-    const getCards = async () => {
-      if (contract) {
-        const _cards: Card[] = [];
-        const { tokenURI } = contract.functions;
-        for (let i = 1; i < 8; i++) {
-          const result = await tokenURI(i);
-          console.log(result);
-          const { name, image } = await fetchMetadata(result);
-          _cards.push({ id: String(i), title: name, image });
-        }
-        setCards(_cards);
-      }
-    };
-    console.log("getCards");
-    getCards();
+    window.location.reload();
   };
 
   const burnPost = async (id: string) => {
@@ -85,7 +71,7 @@ const MemoryView = (props: {
       <Button onClick={handleRefreshBtn}>REFRESH</Button>
       <Grid container spacing={4} px="5vw">
         {cards.map((card, key) => (
-          <Grid key={key} item xs={12} sm={6} md={4} lg={3}>
+          <Grid key={key} item xs={12} sm={12} md={6} lg={4}>
             <MemoryCard
               title={card.title}
               src={card.image}

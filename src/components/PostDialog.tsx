@@ -9,7 +9,8 @@ import {
   FormLabel,
   Radio,
   RadioGroup,
-  TextField
+  TextField,
+  Button
 } from "@mui/material";
 import LoadingButton from "./LoadingButton";
 import { ethers } from "ethers";
@@ -51,6 +52,7 @@ const PostDialog = (props: {
   const [cardTitle, setCardTitle] = useState("");
   const [cardText, setCardText] = useState("");
   const [cardColor, setCardColor] = useState("white");
+  const [cardImage, setCardImage] = useState<File | null>(null);
   const [loading, setLoading] = useState(false);
   const canvasRef = useRef(null);
 
@@ -80,17 +82,27 @@ const PostDialog = (props: {
         context.fillRect(0, 0, context.canvas.width, context.canvas.height);
         context.fillStyle = "#000000";
         // write card text
-        context.fillText(cardText, 20, 40, 150);
+        context.fillText(cardText, 20, 20, 150);
         context.fillStyle = "#666666";
         // write date
         const date = new Date();
         context.fillText(date.toLocaleDateString("ja-JP"), 130, 90);
+
+        if (cardImage) {
+          const img = new Image();
+          img.src = URL.createObjectURL(cardImage);
+          img.onload = () => {
+            context.drawImage(img, 10, 30, 80, 60);
+          };
+        }
       }
     }
-  }, [cardText, cardColor]);
+  }, [cardText, cardColor, cardImage]);
 
   const handleClose = () => {
-    if (!loading) onClose();
+    if (!loading) {
+      onClose();
+    }
   };
 
   const handlePost = async () => {
@@ -134,6 +146,10 @@ const PostDialog = (props: {
         setLoading(false);
       }
     }
+  };
+
+  const onFileInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    if (e.target.files) setCardImage(e.target.files[0]);
   };
 
   return (
@@ -191,6 +207,10 @@ const PostDialog = (props: {
           value={cardText}
           onChange={(e) => setCardText(e.target.value)}
         />
+        <Button variant="contained" component="label">
+          Upload File
+          <input type="file" hidden onChange={(e) => onFileInputChange(e)} />
+        </Button>
       </DialogContent>
       <DialogActions>
         <LoadingButton
