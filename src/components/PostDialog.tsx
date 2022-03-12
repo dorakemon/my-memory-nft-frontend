@@ -120,7 +120,7 @@ const PostDialog = (props: {
         if (contract) {
           const { mintBurnable } = contract.functions;
           const result = await mintBurnable(metadataUrl, {
-            value: ethers.utils.parseEther("1")
+            value: ethers.utils.parseEther("0.5")
           });
           console.log(result);
           setLoading(false);

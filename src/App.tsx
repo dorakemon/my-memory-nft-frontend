@@ -1,6 +1,5 @@
 import React, { useEffect, useState } from "react";
 import { ethers } from "ethers";
-// import Web3 from "web3";
 
 import "./App.css";
 import { Button } from "@mui/material";
@@ -11,7 +10,7 @@ import artifact from "./abi/Burnable.json";
 import MemoryView from "./components/MemoryView";
 import Header from "./components/Header";
 
-const contractAddress = "0xD887B1ff25A0a15bCc5cC247908Ab03F5cDE4C29";
+const contractAddress = "0xaf6C00dD827b42Ea6bA1B7d4E2532Bb629E3b568";
 
 function App() {
   const [address, setAddress] = useState("");
@@ -25,9 +24,6 @@ function App() {
       console.log(window.ethereum);
       const provider = new ethers.providers.Web3Provider(window.ethereum);
       await provider.send("eth_requestAccounts", []);
-      const account = await window.ethereum.request({
-        method: "eth_requestAccounts"
-      });
 
       const signer = provider.getSigner();
       const contractUser = await signer.getAddress();
@@ -96,7 +92,7 @@ function App() {
         onClose={handlePostDialogClose}
         contract={contract}
       />
-      <MemoryView contract={contract} />
+      <MemoryView contract={contract} address={address} />
     </div>
   );
 }

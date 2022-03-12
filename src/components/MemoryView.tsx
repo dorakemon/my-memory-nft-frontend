@@ -15,8 +15,11 @@ const fetchMetadata = async (url: string) => {
   return { name: resJson.name, image: resJson.image };
 };
 
-const MemoryView = (props: { contract: ethers.Contract | null }) => {
-  const { contract } = props;
+const MemoryView = (props: {
+  contract: ethers.Contract | null;
+  address: string;
+}) => {
+  const { contract, address } = props;
 
   const [cards, setCards] = useState<Card[]>([]);
 
@@ -25,12 +28,18 @@ const MemoryView = (props: { contract: ethers.Contract | null }) => {
       if (contract) {
         const _cards: Card[] = [];
         try {
-          const { tokenURI } = contract.functions;
-          for (let i = 1; i < 7; i++) {
-            const result = await tokenURI(i);
-            console.log(result);
-            const { name, image } = await fetchMetadata(result);
-            _cards.push({ id: String(i), title: name, image });
+          const { getTokenIdBySender, tokenURI } = contract.functions;
+          console.log(ethers.utils.getAddress(address));
+          const result = await getTokenIdBySender();
+          // const result = await tokenURI(2);
+          const nums = result[0];
+          console.log(result);
+          // for (const bigNum in result[0]) {
+          for (let i = 0; i < result[0].length; i++) {
+            const resultURI = await tokenURI(nums[i]);
+            console.log(resultURI);
+            const { name, image } = await fetchMetadata(resultURI);
+            _cards.push({ id: String(nums[i].toNumber()), title: name, image });
           }
         } finally {
           setCards(_cards);
